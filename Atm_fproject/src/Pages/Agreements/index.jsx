@@ -1,15 +1,13 @@
-import AgreementTable from '../../components/Agreement/AgreementTable';
-import { useNavigate } from 'react-router-dom';
+import React from 'react';
+import AgreementList from '../../components/Agreement/AgreementList';
+import { useAgreementContext } from '../../context/AgreementContext';
 
-export default function Agreements() {
-  const navigate = useNavigate();
+export default function AgreementsPage() {
+  const { agreements } = useAgreementContext();
+
   return (
-    <div className="agreements-page-content">
-      <div className="agreements-header">
-        <h2>My Agreements</h2>
-        <button className="add-button" onClick={() => navigate('/agreements/create')}>+ Add New</button>
-      </div>
-      <AgreementTable />
+    <div>
+      <AgreementList agreements={agreements} />
     </div>
   );
 }

@@ -1,9 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useAgreementContext } from '../../context/AgreementContext';
+import { useNavigate } from 'react-router-dom';
 import { Header } from '../../components/Layout/Header';
 import { LeftPanel } from '../../components/Layout/LeftPanel';
-
+import { RightPanel } from '../../components/Layout/RightPanel';
 
 const CreateAgreement = () => {
+  const { agreementData, isEditing, stopEditing, updateAgreementData } = useAgreementContext();
+  const navigate = useNavigate();
+  
   const [formData, setFormData] = useState({
     title: '',
     reference: '',
@@ -15,6 +20,23 @@ const CreateAgreement = () => {
     status: 'Draft',
     file: null
   });
+
+  // Load existing data when editing
+  useEffect(() => {
+    if (isEditing && agreementData) {
+      setFormData({
+        title: agreementData.agreementTitle || '',
+        reference: agreementData.agreementReference || '',
+        type: agreementData.type || '',
+        party: agreementData.counterParty || '',
+        startDate: agreementData.startDate || '',
+        endDate: agreementData.expiryDate || '',
+        department: agreementData.department || '',
+        status: agreementData.status || 'Draft',
+        file: agreementData.attachment || null
+      });
+    }
+  }, [isEditing, agreementData]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -33,8 +55,37 @@ const CreateAgreement = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log('Agreement submitted:', formData);
-    // Add your submission logic here (API call, etc.)
+    
+    // Convert form data to agreement format
+    const updatedAgreementData = {
+      agreementTitle: formData.title,
+      agreementReference: formData.reference,
+      type: formData.type,
+      counterParty: formData.party,
+      startDate: formData.startDate,
+      expiryDate: formData.endDate,
+      department: formData.department,
+      status: formData.status,
+      attachment: formData.file
+    };
+
+    if (isEditing) {
+      // Update existing agreement
+      updateAgreementData(updatedAgreementData);
+      stopEditing();
+      navigate('/agreements/preview');
+    } else {
+      // Create new agreement
+      updateAgreementData(updatedAgreementData);
+      navigate('/agreements/preview');
+    }
+  };
+
+  const handleCancel = () => {
+    if (isEditing) {
+      stopEditing();
+    }
+    navigate('/agreements');
   };
 
   return (
@@ -43,7 +94,7 @@ const CreateAgreement = () => {
       <div className="main-content">
         <LeftPanel />
         <div className="content-area">
-          <h1>Create New Agreement</h1>
+          <h1>{isEditing ? 'Edit Agreement' : 'Create New Agreement'}</h1>
           
           <form onSubmit={handleSubmit} className="agreement-form">
             <div className="form-section">
@@ -173,8 +224,10 @@ const CreateAgreement = () => {
             </div>
             
             <div className="form-actions">
-              <button type="button" className="cancel-btn">Cancel</button>
-              <button type="submit" className="submit-btn">Create Agreement</button>
+              <button type="button" className="cancel-btn" onClick={handleCancel}>Cancel</button>
+              <button type="submit" className="submit-btn">
+                {isEditing ? 'Update Agreement' : 'Create Agreement'}
+              </button>
             </div>
           </form>
         </div>

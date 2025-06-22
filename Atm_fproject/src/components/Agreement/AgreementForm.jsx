@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useAgreementContext } from '../../context/AgreementContext';
 
 const departments = [
   'Business Development (BD)',
@@ -11,7 +12,9 @@ const statuses = ['Active', 'Expired', 'Cancelled'];
 const types = ['Malaysia', 'Bangladesh', 'India'];
 const users = ['Saim Bin Selim', 'Aynur Rahman', 'S M Jahangir Akhter'];
 
-export default function AgreementForm({ onSubmit }) {
+export default function AgreementForm({ onSubmit, initialData }) {
+  const { isEditing } = useAgreementContext();
+  
   const [form, setForm] = useState({
     agreementId: '',
     agreementReference: '',
@@ -25,6 +28,25 @@ export default function AgreementForm({ onSubmit }) {
     attachment: null,
     usersWithAccess: [],
   });
+
+  // Load existing data when editing
+  useEffect(() => {
+    if (isEditing && initialData) {
+      setForm({
+        agreementId: initialData.agreementId || '',
+        agreementReference: initialData.agreementReference || '',
+        type: initialData.type || '',
+        agreementTitle: initialData.agreementTitle || '',
+        startDate: initialData.startDate || '',
+        expiryDate: initialData.expiryDate || '',
+        reminderDate: initialData.reminderDate || '',
+        department: initialData.department || '',
+        status: initialData.status || '',
+        attachment: initialData.attachment || null,
+        usersWithAccess: initialData.usersWithAccess || [],
+      });
+    }
+  }, [isEditing, initialData]);
 
   const handleChange = (e) => {
     const { name, value, type } = e.target;
@@ -47,7 +69,7 @@ export default function AgreementForm({ onSubmit }) {
 
   return (
     <form className="agreement-form" onSubmit={handleSubmit} style={{maxWidth: 800, margin: '0 auto'}}>
-      <h2>Agreement Details</h2>
+      <h2>{isEditing ? 'Edit Agreement' : 'Agreement Details'}</h2>
       <div className="form-row">
         <div className="form-group">
           <label>Agreement ID</label>
@@ -114,7 +136,9 @@ export default function AgreementForm({ onSubmit }) {
         </div>
       </div>
       <div className="form-actions" style={{marginTop: 24}}>
-        <button type="submit" className="btn btn-primary">Preview</button>
+        <button type="submit" className="btn btn-primary" style={{backgroundColor: '#008fd5'}}>
+          {isEditing ? 'Update Agreement' : 'Preview'}
+        </button>
         <button type="button" className="btn" style={{marginLeft: 12}} onClick={() => window.history.back()}>Back</button>
       </div>
     </form>
