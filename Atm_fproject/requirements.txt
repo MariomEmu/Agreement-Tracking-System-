@@ -1,0 +1,20 @@
+# This is a frontend React project (Vite-based)
+# Use with Node.js and npm
+
+# Node.js version (recommend LTS)
+node>=16.0.0
+
+# Core dependencies
+react
+react-dom
+react-router-dom
+recharts
+
+# Development tools
+vite
+eslint
+
+# Optional: For icons
+react-icons
+
+# If using any other packages, add them below 
