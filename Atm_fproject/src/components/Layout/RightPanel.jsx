@@ -7,9 +7,10 @@ const notifications = [
   { id: 4, text: 'New agreement created', time: '14 Jan 2025, 11:57 AM' }
 ];
 
-const RightPanel = () => {
+const RightPanel = ({ show, onClose }) => {
   return (
-    <div className="right-panel">
+    <div className={`right-panel${show ? ' active' : ''}`}>
+      <button className="close-sidebar-btn" onClick={onClose} style={{ display: 'none', position: 'absolute', right: 12, top: 12, zIndex: 201 }}>×</button>
       <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px'}}>
         <div style={{display: 'flex', alignItems: 'center'}}>
           <FiBell size={20} style={{color: '#1a237e', marginRight: '8px'}} />

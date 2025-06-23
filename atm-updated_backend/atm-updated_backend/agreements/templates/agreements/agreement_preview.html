@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load agreement_filters %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h3 class="card-title mb-0">Agreement Preview</h3>
+                    <a href="{% url 'agreements:add_agreement' %}?edit_from_preview=1" class="btn btn-primary">Edit</a>
+                </div>
+                <div class="card-body">
+                    <div class="mb-4">
+                        <h4>Agreement Details</h4>
+                        <table class="table">
+                            <tr>
+                                <th>Title:</th>
+                                <td>{{ form.title.value }}</td>
+                            </tr>
+                            <tr>
+                                <th>Agreement Type:</th>
+                                <td>{{ department_name }}</td>
+                            </tr>
+                            <tr>
+                                <th>Status:</th>
+                                <td>{{ form.status.value|get_choice_display:form.status.field.choices }}</td>
+                            </tr>
+                            <tr>
+                                <th>Start Date:</th>
+                                <td>{{ form.start_date.value }}</td>
+                            </tr>
+                            <tr>
+                                <th>Expiry Date:</th>
+                                <td>{{ form.expiry_date.value }}</td>
+                            </tr>
+                            <tr>
+                                <th>Party Name:</th>
+                                <td>{{ form.party_name.value }}</td>
+                            </tr>
+                            {% if attachment %}
+                            <tr>
+                                <th>Attachment:</th>
+                                <td>{{ attachment.name }}</td>
+                            </tr>
+                            {% endif %}
+                        </table>
+                    </div>
+
+                    <div class="mb-4">
+                        <h4>Users with Access</h4>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Email</th>
+                                        <th>Department</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for user in assigned_users %}
+                                    <tr>
+                                        <td>{{ user.email }}</td>
+                                        <td>{{ user.department.name|default:"-" }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <form method="post" action="{% url 'agreements:submit_agreement' %}" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {% for field in form %}
+                            {% if field.name != 'attachment' %}
+                                <input type="hidden" name="{{ field.name }}" value="{{ field.value }}">
+                            {% endif %}
+                        {% endfor %}
+                        {% if attachment %}
+                            <input type="hidden" name="attachment_path" value="{{ attachment.path }}">
+                        {% endif %}
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-success">Submit Agreement</button>
+                            <a href="{% url 'agreements:agreement_list' %}" class="btn btn-secondary">Cancel</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Store form data in session storage when clicking Edit
+    const editButton = document.querySelector('a[href*="edit_from_preview"]');
+    if (editButton) {
+        editButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            const formData = {};
+            {% for field in form %}
+                {% if field.name == 'start_date' or field.name == 'expiry_date' %}
+                    formData['{{ field.name }}'] = '{{ field.value|date:"Y-m-d" }}';
+                {% else %}
+                    formData['{{ field.name }}'] = '{{ field.value }}';
+                {% endif %}
+            {% endfor %}
+            sessionStorage.setItem('preview_form_data', JSON.stringify(formData));
+            window.location.href = this.href;
+        });
+    }
+});
+</script>
+{% endblock %} 

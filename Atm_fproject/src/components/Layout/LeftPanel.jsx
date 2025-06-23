@@ -5,7 +5,7 @@ import {
 import { NavLink, useLocation } from 'react-router-dom';
 import Header from './Header';
 
-const LeftPanel = () => {
+const LeftPanel = ({ show, onClose }) => {
   const location = useLocation();
   
   const isActive = (path) => {
@@ -13,7 +13,8 @@ const LeftPanel = () => {
   };
 
   return (
-    <div className="left-panel">
+    <div className={`left-panel${show ? ' active' : ''}`}>
+      <button className="close-sidebar-btn" onClick={onClose} style={{ display: 'none', position: 'absolute', right: 12, top: 12, zIndex: 201 }}>×</button>
       <nav>
         <ul style={{padding: 0, margin: 0, listStyle: 'none'}}>
           <li className={isActive('/') ? 'active' : ''} style={{marginBottom: 8}}>

@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Agreements</h2>
+        {% if not user.department.executive %}
+            <a href="{% url 'agreements:add_agreement' %}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Add New Agreement
+            </a>
+        {% endif %}
+    </div>
+
+    <div class="row">
+        {% if agreements %}
+            {% for agreement in agreements %}
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-header bg-light">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="card-title mb-0">{{ agreement.title }}</h5>
+                                <span class="badge {% if agreement.status == 'ongoing' %}bg-success{% else %}bg-danger{% endif %}">
+                                    {{ agreement.get_status_display }}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <p class="card-text">
+                                <strong>Party:</strong> {{ agreement.party_name }}<br>
+                                <strong>Start Date:</strong> {{ agreement.start_date }}<br>
+                                <strong>Expiry Date:</strong> {{ agreement.expiry_date }}<br>
+                                <strong>Reminder Date:</strong> {{ agreement.reminder_time }}<br>
+                                {% if agreement.creator %}
+                                    <strong>Created By:</strong> {{ agreement.creator.get_full_name|default:agreement.creator.email }}<br>
+                                {% endif %}
+                                {% if agreement.department %}
+                                    <strong>Department:</strong> {{ agreement.department.name }}<br>
+                                {% endif %}
+                                <strong>Created:</strong> {{ agreement.created_at|date:"M d, Y" }}
+                            </p>
+                            <div class="d-flex gap-2">
+                                {% if agreement.attachment %}
+                                    <a href="{{ agreement.attachment.url }}" class="btn btn-sm btn-info" target="_blank">
+                                        <i class="fas fa-file-pdf"></i> View Document
+                                    </a>
+                                {% endif %}
+                                {% if not user.department.executive %}
+                                    <a href="{% url 'agreements:edit_agreement' agreement.id %}" class="btn btn-sm btn-warning">
+                                        <i class="fas fa-edit"></i> Edit Agreement
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="card-footer bg-light">
+                            <small class="text-muted">
+                                <strong>Users with Access:</strong><br>
+                                {% if agreement.department %}
+                                    {% for user in agreement.department.users.all %}
+                                        <span class="badge bg-secondary">{{ user.email }}</span>
+                                    {% endfor %}
+                                    {% for permission in agreement.department.permitted_users.all %}
+                                        <span class="badge bg-info">{{ permission.user.email }}</span>
+                                    {% endfor %}
+                                {% endif %}
+                                {% for dept in departments %}
+                                    {% if dept.executive %}
+                                        {% for user in dept.users.all %}
+                                            <span class="badge bg-warning">{{ user.email }}</span>
+                                        {% endfor %}
+                                    {% endif %}
+                                {% endfor %}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-12">
+                <div class="alert alert-info">
+                    No agreements found.{% if not user.department.executive %} Click the "Add New Agreement" button to create one.{% endif %}
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %} 

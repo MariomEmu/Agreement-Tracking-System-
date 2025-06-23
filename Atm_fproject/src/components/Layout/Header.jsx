@@ -1,8 +1,8 @@
-import { FiSearch } from 'react-icons/fi';
+import { FiSearch, FiMenu, FiBell } from 'react-icons/fi';
 import { useLocation, NavLink, useNavigate } from 'react-router-dom';
 import React, { useState, useEffect, useRef } from 'react';
 
-const Header = () => {
+const Header = ({ onMenuClick, onRightPanelClick }) => {
   const location = useLocation();
   const navigate = useNavigate();
   const pathnames = location.pathname.split('/').filter(x => x); // Split path and filter out empty strings
@@ -10,6 +10,7 @@ const Header = () => {
   const [currentDateTime, setCurrentDateTime] = useState(new Date());
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const profileRef = useRef(null);
+  const [showSidebar, setShowSidebar] = useState(false);
 
   // Get first name from email
   let firstName = 'User';
@@ -58,6 +59,14 @@ const Header = () => {
 
   return (
     <header className="header">
+      {/* Mobile menu button */}
+      <button className="mobile-menu-btn" onClick={onMenuClick} style={{ display: 'none', position: 'absolute', left: 12, top: 12, zIndex: 200 }}>
+        <FiMenu size={24} />
+      </button>
+      {/* Mobile notifications button */}
+      <button className="mobile-bell-btn" onClick={onRightPanelClick} style={{ display: 'none', position: 'absolute', right: 12, top: 12, zIndex: 200 }}>
+        <FiBell size={24} />
+      </button>
       {/* Column 1: Logo (aligned with LeftPanel) */}
       <div className="header-logo-column">
         <img src="/sonali_intellect_logo.png" alt="Sonali Intellect" className="full-logo" style={{height: 32}} />
