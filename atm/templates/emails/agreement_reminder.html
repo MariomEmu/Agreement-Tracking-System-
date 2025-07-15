@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Agreement Reminder</title>
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; }
+        .agreement-details { margin: 20px 0; padding: 15px; background-color: #f5f5f5; border-radius: 5px; }
+        .detail-item { margin-bottom: 8px; }
+        .detail-label { font-weight: bold; }
+        .days-remaining { color: #d9534f; font-weight: bold; }
+        .test-banner { background-color: #fff3cd; color: #856404; padding: 10px; 
+                       margin-bottom: 20px; border: 1px solid #ffeeba; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    {% if is_test %}
+    <div class="test-banner">
+        <strong>NOTE:</strong> This is a TEST email for the agreement reminder system.
+    </div>
+    {% endif %}
+
+    <!-- Rest of your template remains the same -->
+    <p>Dear {{ user.full_name }},</p>
+    ...
+</body>
+</html>

@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Dashboard</h2>
+    <div class="row mt-4">
+        <div class="col-md-12 mb-4">
+            {% if not user.department.executive %}
+                <a href="{% url 'agreements:add_agreement' %}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Add New Agreement
+                </a>
+            {% endif %}
+        </div>
+    </div>
+    <div class="dashboard">
+        <h2>Welcome to Your Dashboard</h2>
+        
+        <div class="user-info">
+            <p><strong>Email:</strong> {{ user.email }}</p>
+            <p><strong>Name:</strong> {{ user.full_name }}</p>
+            {% if user.department %}
+                <p><strong>Department:</strong> {{ user.department.name }}</p>
+            {% endif %}
+            {% if user.role %}
+                <p><strong>Role:</strong> {{ user.role.name }}</p>
+            {% endif %}
+        </div>
+        
+        <div style="margin-top: 20px;">
+            <a href="{% url 'accounts:user_logout' %}" class="btn btn-danger">Logout</a>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,14 @@
+Dear {{ user.full_name }},
+
+This is a reminder about the agreement "{{ agreement.title }}" (Reference: {{ agreement.agreement_reference }}).
+
+- Department: {{ department_name }}
+- Vendor: {{ vendor_name }}
+- Start Date: {{ agreement.start_date }}
+- Expiry Date: {{ agreement.expiry_date }}
+- Days Remaining: {{ days_remaining }}
+
+Please review this agreement and take necessary actions before it expires.
+
+Best regards,
+{{ department_name }} Team

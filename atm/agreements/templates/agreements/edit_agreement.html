@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h3 class="card-title mb-0">Edit Agreement</h3>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        {# Show current attachment if it exists #}
+                        {% if agreement.attachment %}
+                        <div id="current-attachment" class="mb-3">
+                            <label class="form-label">Current file:</label>
+                            <a href="{{ agreement.attachment.url }}" target="_blank">{{ agreement.attachment.name }}</a>
+                            <button type="button" id="delete-attachment-btn" class="btn btn-sm btn-danger ms-2">Delete</button>
+                        </div>
+                        <input type="hidden" name="delete_attachment" id="delete-attachment-flag" value="0">
+                        {% endif %}
+
+                        {% for field in form %}
+                            <div class="mb-3" id="field-{{ field.name }}">
+                                <label for="{{ field.id_for_label }}" class="form-label">
+                                    {{ field.label }}
+                                    {% if field.field.required %}
+                                        <span class="text-danger">*</span>
+                                    {% endif %}
+                                </label>
+                                {{ field.errors }}
+                                {# Only show the file input if no current attachment or after delete #}
+                                {% if field.name == 'attachment' %}
+                                    <div id="attachment-input-wrapper" {% if agreement.attachment %}style="display:none;"{% endif %}>
+                                        {{ field }}
+                                    </div>
+                                {% else %}
+                                    {{ field }}
+                                {% endif %}
+                                {% if field.help_text %}
+                                    <div class="form-text">{{ field.help_text }}</div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                        
+                        <div class="d-flex justify-content-between mt-4">
+                            <a href="{% url 'agreements:agreement_list' %}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Back to List
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Save Changes
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var deleteBtn = document.getElementById('delete-attachment-btn');
+        if (deleteBtn) {
+            deleteBtn.addEventListener('click', function() {
+                // Hide current attachment
+                document.getElementById('current-attachment').style.display = 'none';
+                // Show file input
+                document.getElementById('attachment-input-wrapper').style.display = 'block';
+                // Set file input as required
+                var fileInput = document.getElementById('id_attachment');
+                if (fileInput) fileInput.required = true;
+                // Set hidden flag
+                document.getElementById('delete-attachment-flag').value = '1';
+            });
+        }
+    });
+</script>
+{% endblock %} 
