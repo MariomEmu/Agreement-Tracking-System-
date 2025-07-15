@@ -16,10 +16,13 @@ const CreateAgreement = () => {
     party: '',
     startDate: '',
     endDate: '',
+    reminderDate: '',
     department: '',
     status: 'Draft',
     file: null
   });
+
+  const [dateError, setDateError] = useState('');
 
   // Load existing data when editing
   useEffect(() => {
@@ -31,6 +34,7 @@ const CreateAgreement = () => {
         party: agreementData.counterParty || '',
         startDate: agreementData.startDate || '',
         endDate: agreementData.expiryDate || '',
+        reminderDate: agreementData.reminderDate || '',
         department: agreementData.department || '',
         status: agreementData.status || 'Draft',
         file: agreementData.attachment || null
@@ -55,7 +59,27 @@ const CreateAgreement = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setDateError('');
     
+    // Date validation
+    if (formData.startDate && formData.endDate) {
+      const start = new Date(formData.startDate);
+      const end = new Date(formData.endDate);
+      if (end < start) {
+        setDateError('End date cannot be before start date');
+        return;
+      }
+    }
+    if (formData.startDate && formData.endDate && formData.reminderDate) {
+      const start = new Date(formData.startDate);
+      const end = new Date(formData.endDate);
+      const reminder = new Date(formData.reminderDate);
+      if (reminder <= start || reminder >= end) {
+        setDateError('Reminder date must be after start date and before end date');
+        return;
+      }
+    }
+
     // Convert form data to agreement format
     const updatedAgreementData = {
       agreementTitle: formData.title,
@@ -64,6 +88,7 @@ const CreateAgreement = () => {
       counterParty: formData.party,
       startDate: formData.startDate,
       expiryDate: formData.endDate,
+      reminderDate: formData.reminderDate,
       department: formData.department,
       status: formData.status,
       attachment: formData.file
@@ -175,7 +200,18 @@ const CreateAgreement = () => {
                     required
                   />
                 </div>
+                <div className="form-group">
+                  <label>Reminder Date*</label>
+                  <input
+                    type="date"
+                    name="reminderDate"
+                    value={formData.reminderDate}
+                    onChange={handleChange}
+                    required
+                  />
+                </div>
               </div>
+              {dateError && <div style={{ color: 'red', marginTop: '-1rem', marginBottom: '1rem' }}>{dateError}</div>}
             </div>
             
             <div className="form-section">

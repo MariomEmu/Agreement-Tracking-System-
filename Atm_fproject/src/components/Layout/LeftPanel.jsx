@@ -1,6 +1,6 @@
 import { 
   FaHome, FaFileContract, FaFileInvoice, FaEnvelope, 
-  FaShoppingCart, FaChartBar, FaCog 
+  FaShoppingCart, FaChartBar, FaCog, FaUserShield
 } from 'react-icons/fa';
 import { NavLink, useLocation } from 'react-router-dom';
 import Header from './Header';
@@ -14,7 +14,13 @@ const LeftPanel = ({ show, onClose }) => {
 
   return (
     <div className={`left-panel${show ? ' active' : ''}`}>
-      <button className="close-sidebar-btn" onClick={onClose} style={{ display: 'none', position: 'absolute', right: 12, top: 12, zIndex: 201 }}>×</button>
+      <button 
+        className="close-sidebar-btn" 
+        onClick={onClose}
+        aria-label="Close menu"
+      >
+        ×
+      </button>
       <nav>
         <ul style={{padding: 0, margin: 0, listStyle: 'none'}}>
           <li className={isActive('/') ? 'active' : ''} style={{marginBottom: 8}}>
@@ -22,6 +28,12 @@ const LeftPanel = ({ show, onClose }) => {
               <FaHome className="icon" />
               <span>Dashboard</span>
             </NavLink>
+          </li>
+          <li style={{marginBottom: 8}}>
+          <a href="http://localhost:8000/admin/" target="_blank" rel="noopener noreferrer">
+              <FaUserShield className="icon" />
+              <span>Adminstration</span>
+            </a>
           </li>
           <li className={isActive('agreements') ? 'active' : ''} style={{marginBottom: 8}}>
             <NavLink to="/agreements" className={({isActive}) => isActive ? 'active-link' : ''}>

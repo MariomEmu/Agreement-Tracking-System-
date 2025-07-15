@@ -60,13 +60,23 @@ const Header = ({ onMenuClick, onRightPanelClick }) => {
   return (
     <header className="header">
       {/* Mobile menu button */}
-      <button className="mobile-menu-btn" onClick={onMenuClick} style={{ display: 'none', position: 'absolute', left: 12, top: 12, zIndex: 200 }}>
+      <button 
+        className="mobile-menu-btn" 
+        onClick={onMenuClick}
+        aria-label="Toggle menu"
+      >
         <FiMenu size={24} />
       </button>
+      
       {/* Mobile notifications button */}
-      <button className="mobile-bell-btn" onClick={onRightPanelClick} style={{ display: 'none', position: 'absolute', right: 12, top: 12, zIndex: 200 }}>
+      <button 
+        className="mobile-bell-btn" 
+        onClick={onRightPanelClick}
+        aria-label="Toggle notifications"
+      >
         <FiBell size={24} />
       </button>
+      
       {/* Column 1: Logo (aligned with LeftPanel) */}
       <div className="header-logo-column">
         <img src="/sonali_intellect_logo.png" alt="Sonali Intellect" className="full-logo" style={{height: 32}} />
@@ -110,6 +120,9 @@ const Header = ({ onMenuClick, onRightPanelClick }) => {
           <span style={{whiteSpace: 'nowrap', marginLeft: 4}}>Welcome, {firstName}</span>
           {dropdownOpen && (
             <div style={{ position: 'absolute', right: 0, top: '110%', background: '#fff', boxShadow: '0 2px 8px rgba(0,0,0,0.12)', borderRadius: 6, minWidth: 120, zIndex: 10 }}>
+              <button onClick={() => navigate('/change-password')} style={{ width: '100%', padding: '10px 16px', background: 'none', border: 'none', textAlign: 'left', cursor: 'pointer', fontWeight: 500, color: '#222', borderRadius: 6 }}>
+                Change Password
+              </button>
               <button onClick={handleLogout} style={{ width: '100%', padding: '10px 16px', background: 'none', border: 'none', textAlign: 'left', cursor: 'pointer', fontWeight: 500, color: '#222', borderRadius: 6 }}>
                 Logout
               </button>

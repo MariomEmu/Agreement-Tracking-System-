@@ -10,7 +10,13 @@ const notifications = [
 const RightPanel = ({ show, onClose }) => {
   return (
     <div className={`right-panel${show ? ' active' : ''}`}>
-      <button className="close-sidebar-btn" onClick={onClose} style={{ display: 'none', position: 'absolute', right: 12, top: 12, zIndex: 201 }}>×</button>
+      <button 
+        className="close-sidebar-btn" 
+        onClick={onClose}
+        aria-label="Close notifications"
+      >
+        ×
+      </button>
       <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px'}}>
         <div style={{display: 'flex', alignItems: 'center'}}>
           <FiBell size={20} style={{color: '#1a237e', marginRight: '8px'}} />

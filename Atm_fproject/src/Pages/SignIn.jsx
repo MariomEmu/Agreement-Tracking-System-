@@ -1,8 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Cookies from 'js-cookie';
 
-const DUMMY_EMAIL = 'demo.sonali@gmail.com';
-const DUMMY_PASSWORD = 'password123';
+
+import axiosInstance from '../axiosConfig';  // import this at the top
+
+
+
 
 const SignIn = () => {
   const navigate = useNavigate();
@@ -16,16 +20,58 @@ const SignIn = () => {
     }
   }, [navigate]);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (email === DUMMY_EMAIL && password === DUMMY_PASSWORD) {
+ 
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setError('');
+
+  try {
+    // Fetch CSRF token first
+    await axiosInstance.get('get-csrf/');
+
+   // Then send login request with credentials and CSRF token
+   const response = await axiosInstance.post('accounts/login/', {
+    email: email,
+    password: password
+  }, {
+    withCredentials: true,  // Important for session cookies
+    headers: {
+      'X-CSRFToken': axiosInstance.defaults.xsrfCookieName 
+        ? Cookies.get(axiosInstance.defaults.xsrfCookieName)
+        : null,
+    }
+  });
+
+    if (response.status === 200) {
+      // Store login status
       localStorage.setItem('isLoggedIn', 'true');
       localStorage.setItem('userEmail', email);
+      
+      // Store comprehensive user information
+      const userData = response.data.user;
+      localStorage.setItem('userData', JSON.stringify(userData));
+      
+      // Store specific user details for easy access
+      localStorage.setItem('userId', userData.id);
+      localStorage.setItem('userFullName', userData.full_name);
+      localStorage.setItem('userDepartment', userData.department ? userData.department.name : '');
+      localStorage.setItem('userDepartmentId', userData.department ? userData.department.id : '');
+      localStorage.setItem('userPermittedDepartments', JSON.stringify(userData.permitted_departments));
+      localStorage.setItem('userIsExecutive', userData.is_executive);
+      
+      console.log('User logged in successfully:', userData);
       navigate('/');
     } else {
-      setError('Invalid email or password.');
+      setError('Login failed.');
     }
-  };
+  } catch (error) {
+    console.error('Login error:', error);
+    setError(error.response?.data?.error || 'Login failed.');
+  }
+};
+
+
+
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'flex-start', background: '#f7f9f8', marginLeft: '25vw' }}>

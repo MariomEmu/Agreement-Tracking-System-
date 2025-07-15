@@ -1,18 +1,5 @@
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
 
-const agreementDeptData = [
-  { name: 'HR', value: 7 },
-  { name: 'Admin', value: 12 },
-  { name: 'IT', value: 10 },
-  { name: 'BDD', value: 15 },
-  { name: 'Others', value: 11 },
-];
-const invoStatusData = [
-  { name: 'Active', value: 52.1, color: '#2980b9' },
-  { name: 'Expiry in 3 months', value: 22.8, color: '#f39c12' },
-  { name: 'Expiry in 1 month', value: 13.9, color: '#e67e22' },
-  { name: 'Expired', value: 11.2, color: '#e74c3c' },
-];
 const invoiceCustomerData = [
   { name: 'JB PLC', value: 18 },
   { name: 'SB PLC', value: 28 },

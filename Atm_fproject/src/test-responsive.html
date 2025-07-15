@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responsive Test</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f4f7f6;
+        }
+        
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .responsive-info {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .breakpoint-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .breakpoint {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            text-align: center;
+        }
+        
+        .breakpoint.active {
+            background: #d4edda;
+            border: 2px solid #28a745;
+        }
+        
+        @media (max-width: 1199px) {
+            .breakpoint.medium { background: #d4edda; border: 2px solid #28a745; }
+        }
+        
+        @media (max-width: 991px) {
+            .breakpoint.small { background: #d4edda; border: 2px solid #28a745; }
+        }
+        
+        @media (max-width: 767px) {
+            .breakpoint.mobile { background: #d4edda; border: 2px solid #28a745; }
+        }
+        
+        @media (max-width: 479px) {
+            .breakpoint.tiny { background: #d4edda; border: 2px solid #28a745; }
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="responsive-info">
+            <h1>Responsive Design Test</h1>
+            <p>This page shows the current screen size and which responsive breakpoints are active.</p>
+            
+            <div class="breakpoint-info">
+                <div class="breakpoint large">
+                    <h3>Large Screens</h3>
+                    <p>1200px and up</p>
+                    <p>3-column layout with sidebars</p>
+                </div>
+                
+                <div class="breakpoint medium">
+                    <h3>Medium Screens</h3>
+                    <p>992px - 1199px</p>
+                    <p>3-column layout with smaller right panel</p>
+                </div>
+                
+                <div class="breakpoint small">
+                    <h3>Small Screens</h3>
+                    <p>768px - 991px</p>
+                    <p>Single column with overlay panels</p>
+                </div>
+                
+                <div class="breakpoint mobile">
+                    <h3>Mobile</h3>
+                    <p>480px - 767px</p>
+                    <p>Mobile-optimized layout</p>
+                </div>
+                
+                <div class="breakpoint tiny">
+                    <h3>Tiny Screens</h3>
+                    <p>Up to 479px</p>
+                    <p>Minimal layout</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="responsive-info">
+            <h2>Key Features Implemented:</h2>
+            <ul>
+                <li>✅ Mobile-first responsive design</li>
+                <li>✅ Left panel becomes overlay button on mobile</li>
+                <li>✅ Right panel becomes overlay button on mobile</li>
+                <li>✅ Header adapts to screen size</li>
+                <li>✅ Hero section and dashboard components responsive</li>
+                <li>✅ Panel overlay with click-to-close functionality</li>
+                <li>✅ Escape key closes panels</li>
+                <li>✅ Body scroll prevention when panels are open</li>
+                <li>✅ Smooth transitions and animations</li>
+                <li>✅ Accessible with proper ARIA labels</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html> 
