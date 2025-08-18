@@ -28,4 +28,5 @@ urlpatterns = [
     path('agreements/<int:agreement_id>/users/manage/', manage_user_access, name='manage_user_access'),
     path('users/available/', available_users, name='available_users'),
     path('dashboard-stats/', DashboardStatsAPIView.as_view(), name='dashboard-stats'),
+    
 ]

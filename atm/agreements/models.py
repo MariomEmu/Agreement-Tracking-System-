@@ -5,13 +5,40 @@ from accounts.models import Department, Vendor
 from django.core.exceptions import ValidationError
 import os
 import uuid
-from django.db import transaction
+from django.db import transaction, IntegrityError
+import logging
+from django.utils import timezone
+from django.contrib.auth import get_user_model
+
+logger = logging.getLogger(__name__)
 
 def agreement_file_path(instance, filename):
     """Generate file path for agreement attachments"""
     ext = os.path.splitext(filename)[1]
     filename = f"{uuid.uuid4()}{ext}"
     return os.path.join('agreements', str(instance.agreement_type.id), filename)
+
+class AgreementType(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    description = models.TextField(blank=True)
+    is_active = models.BooleanField(default=True)
+    created_by = models.ForeignKey(
+        get_user_model(),
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='created_agreement_types'
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        ordering = ['name']
+        verbose_name = 'Agreement Type'
+        verbose_name_plural = 'Agreement Types'
+
 
 class Agreement(models.Model):
     AGREEMENT_STATUS = (
@@ -23,15 +50,21 @@ class Agreement(models.Model):
     
     title = models.CharField(max_length=200)
     agreement_type = models.ForeignKey(
-        Department,
-        on_delete=models.CASCADE,
-        related_name='agreements',
-        verbose_name='Department'
+        AgreementType,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name='Type of Agreement'
+    )
+    remarks = models.TextField(
+        blank=True,
+        null=True,
+        verbose_name='Additional Remarks'
     )
     status = models.CharField(
         max_length=15, 
         choices=AGREEMENT_STATUS, 
-        default='draft'
+        default='ongoing'  # Changed from 'draft' to 'ongoing'
     )
     start_date = models.DateField()
     expiry_date = models.DateField()
@@ -109,9 +142,7 @@ class Agreement(models.Model):
                 )
 
     def save(self, *args, **kwargs):
-        # Set department from agreement_type if not set
-        if not self.department and self.agreement_type:
-            self.department = self.agreement_type
+    # Department must be set explicitly; do not assign agreement_type to department
             
         # Auto-generate agreement_id if new record
         if not self.pk and not self.agreement_id:
@@ -151,7 +182,16 @@ class Agreement(models.Model):
             if not self.pk or not Agreement.objects.filter(pk=self.pk, attachment=self.attachment.name).exists():
                 # Use the uploaded file's original name
                 self.original_filename = self.attachment.file.name
-            
+        
+        # Auto-manage status based on expiry date
+        if self.expiry_date:
+            today = timezone.now().date()
+            if self.expiry_date < today:
+                self.status = 'expired'
+            elif self.status == 'expired' and self.expiry_date >= today:
+                # If status was expired but date is now in future, set back to ongoing
+                self.status = 'ongoing'
+        
         super().save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
@@ -168,10 +208,17 @@ class Agreement(models.Model):
         verbose_name = 'Agreement'
         verbose_name_plural = 'Agreements'
 
-    def send_notification(self, user):
+    def send_notification(self, user, reminder_type='before'):
         """Send reminder email for this agreement"""
         from .utils.email_utils import send_agreement_reminder
-        return send_agreement_reminder(self, user)
+        from accounts.models import User
+        # Ensure user is a User instance
+        if isinstance(user, str) or isinstance(user, int):
+            try:
+                user = User.objects.get(pk=user)
+            except User.DoesNotExist:
+                return False
+        return send_agreement_reminder(self, user, reminder_type)
 
     def send_reminder(self, recipient):
         """Send reminder email for this agreement"""
@@ -195,11 +242,15 @@ class Agreement(models.Model):
         )
         return True
 
-
-# Add this method to your existing Agreement model
-def get_users_to_notify(self):
-    """Get all users who should receive notifications for this agreement"""
-    return self.assigned_users.all()
+    def get_users_to_notify(self):
+        """
+        Get all users who should receive notifications for this agreement.
+        Includes all assigned users and the creator (if not already included).
+        """
+        users = list(self.assigned_users.all())
+        if self.creator and self.creator not in users:
+            users.append(self.creator)
+        return users
 
 def send_notification(self, action):
     """Send notification about agreement action to all assigned users"""

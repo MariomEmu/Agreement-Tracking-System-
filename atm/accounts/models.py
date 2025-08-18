@@ -181,3 +181,6 @@ class Vendor(models.Model):
             self.created_at = timezone.now()
         self.updated_at = timezone.now()
         super().save(*args, **kwargs)
+
+    class Meta:
+        ordering = ['name']

@@ -16,10 +16,10 @@ export const DashboardGrid = () => {
         
         <div className="charts-row">
           <AgreementChart />
-          <div className="status-pie">
+          {/* <div className="status-pie">
             <h3>Agreement by Status</h3>
-            {/* Pie chart implementation */}
-          </div>
+            Pie chart implementation
+          </div> */}
         </div>
       </div>
 

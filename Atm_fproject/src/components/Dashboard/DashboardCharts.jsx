@@ -22,7 +22,7 @@ export default function DashboardCharts({ agreementDeptData = [], agreementStatu
           </ResponsiveContainer>
         </div>
         <div className="chart-card" style={{ display: 'flex', flexDirection: 'column' }}>
-          <h3 style={{ marginBottom: 16 }}>Agreement by Status</h3>
+           <h3 style={{ marginBottom: 16 }}>Agreement by Status</h3>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <div style={{ flex: 1, minWidth: 0 }}>
               <ResponsiveContainer width="100%" height={200}>
@@ -51,7 +51,7 @@ export default function DashboardCharts({ agreementDeptData = [], agreementStatu
                 </div>
               ))}
             </div>
-          </div>
+          </div> 
         </div>
       </div>
     </div>

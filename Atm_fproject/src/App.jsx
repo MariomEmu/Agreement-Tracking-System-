@@ -6,14 +6,15 @@ import CreateAgreement from './Pages/CreateAgreement';
 import PreviewAgreement from './Pages/PreviewAgreement';
 import EditAgreementPage from './Pages/EditAgreement';
 import SignIn from './Pages/SignIn';
-import React, { useEffect } from 'react';
+import ResetPassword from './Pages/ResetPassword';
 import ChangePassword from './Pages/ChangePassword';
-
+import React, { useEffect } from 'react';
+import ForgotPasswordReset from './Pages/ForgotPasswordReset';
+ 
 function isLoggedIn() {
-  // For now, check a flag in localStorage
   return localStorage.getItem('isLoggedIn') === 'true';
 }
-
+ 
 function ProtectedRoute({ children }) {
   const location = useLocation();
   if (!isLoggedIn()) {
@@ -21,15 +22,21 @@ function ProtectedRoute({ children }) {
   }
   return children;
 }
-
+ 
 function App() {
   useEffect(() => {
     fetch('http://127.0.0.1:8000/api/get-csrf/', { credentials: 'include' });
   }, []);
-
+ 
   return (
     <Routes>
       <Route path="/signin" element={<SignIn />} />
+      <Route path="/reset-password" element={<ResetPassword />} />
+ 
+      {/* Public route for forgot password reset */}
+      <Route path="/forgot-password-reset" element={<ForgotPasswordReset />} />
+ 
+      {/* Protected routes */}
       <Route
         path="/"
         element={
@@ -51,5 +58,5 @@ function App() {
     </Routes>
   );
 }
-
+ 
 export default App;

@@ -1,26 +1,38 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Agreement Reminder</title>
+    <title>Agreement Expiration Notification</title>
     <style>
         body { font-family: Arial, sans-serif; line-height: 1.6; }
         .agreement-details { margin: 20px 0; padding: 15px; background-color: #f5f5f5; border-radius: 5px; }
         .detail-item { margin-bottom: 8px; }
         .detail-label { font-weight: bold; }
-        .days-remaining { color: #d9534f; font-weight: bold; }
-        .test-banner { background-color: #fff3cd; color: #856404; padding: 10px; 
-                       margin-bottom: 20px; border: 1px solid #ffeeba; border-radius: 4px; }
+        .highlight { color: #d9534f; font-weight: bold; }
     </style>
 </head>
 <body>
-    {% if is_test %}
-    <div class="test-banner">
-        <strong>NOTE:</strong> This is a TEST email for the agreement reminder system.
-    </div>
+    {% if reminder_type == 'before' %}
+    <p>Hello {{ recipient_name }},</p>
+    <p>This is a reminder that your agreement <b>"{{ agreement_name }}"</b> with {{ partner_name }} is set to expire on <b>{{ expiration_date }}</b>.</p>
+    <p>Time remaining: <span class="highlight">{{ time_remaining }}</span></p>
+    <p>If you wish to renew or make changes to your agreement, please contact us before the expiration date to avoid any disruptions.</p>
+    <p>Reference ID: {{ agreement_id }}</p>
+    {% elif reminder_type == 'on' %}
+    <p>Hello {{ recipient_name }},</p>
+    <p>Your agreement <b>"{{ agreement_name }}"</b> with {{ partner_name }} has expired today, <b>{{ expiration_date }}</b>.</p>
+    <p>If this was an oversight or if you’d like to renew, please reach out to us immediately to avoid any service interruptions.</p>
+    <p>Reference ID: {{ agreement_id }}</p>
+    {% elif reminder_type == 'after' %}
+    <p>Hello {{ recipient_name }},</p>
+    <p>This is a follow-up to inform you that your agreement <b>"{{ agreement_name }}"</b> with {{ partner_name }} expired on <b>{{ expiration_date }}</b>.</p>
+    <p>It has been <span class="highlight">{{ months_since_expiration }} month(s)</span> since expiration.<br>If you wish to reinstate your agreement, please contact us as soon as possible.</p>
+    <p>Reference ID: {{ agreement_id }}</p>
     {% endif %}
-
-    <!-- Rest of your template remains the same -->
-    <p>Dear {{ user.full_name }},</p>
-    ...
+    <br>
+    <p>
+        Best regards,<br>
+        {% if company_name %}{{ company_name }}{% else %}Your Company Name{% endif %}
+      </p>
+      
 </body>
 </html>

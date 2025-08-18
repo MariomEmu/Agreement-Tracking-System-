@@ -32,6 +32,15 @@ axiosInstance.interceptors.response.use(
     return response;
   },
   async (error) => {
+
+    // ✅ Handle session expiry
+    if (error.response?.status === 401 || error.response?.status === 403) {
+      // Session expired — clear any local state & redirect
+      localStorage.removeItem('isLoggedIn');
+      window.location.href = "/signin";
+      return;
+    }
+
     if (error.response?.status === 403 && error.response?.data?.detail?.includes('CSRF')) {
       // Try to get a new CSRF token
       try {

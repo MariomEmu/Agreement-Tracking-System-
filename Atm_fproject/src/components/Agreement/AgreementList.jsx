@@ -1,46 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAgreementContext } from '../../context/AgreementContext';
-import { FiEye, FiEdit } from 'react-icons/fi';
+import { FiEye, FiEdit, FiPlus } from 'react-icons/fi';
 import axiosInstance from '../../axiosConfig';
+import SearchBar from '../SearchBar';
+import StatusBadge from '../Common/StatusBadge';
 
-const StatusBadge = ({ status }) => {
-  const badgeStyle = {
-    display: 'inline-block',
-    padding: '0.3rem 0.6rem',
-    borderRadius: '12px',
-    fontSize: '0.8rem',
-    fontWeight: '600',
-    color: '#fff',
-    textAlign: 'center',
-  };
-
-  // Normalize status: capitalize first letter, lowercase the rest
-  let normalizedStatus =
-    typeof status === 'string' && status.length > 0
-      ? status.charAt(0).toUpperCase() + status.slice(1).toLowerCase()
-      : '';
-
-  // Map 'Ongoing' to 'Active'
-  if (normalizedStatus === 'Ongoing') {
-    normalizedStatus = 'Active';
-  }
-
-  const statusStyle = {
-    Active: { backgroundColor: '#28a745' },
-    Expired: { backgroundColor: '#dc3545' },
-    Cancelled: { backgroundColor: '#6c757d' },
-    // Add more statuses if needed
-  };
-
-  const style = statusStyle[normalizedStatus] || { backgroundColor: '#888' };
-
-  return (
-    <span style={{ ...badgeStyle, ...style }}>
-      {normalizedStatus || 'Unknown'}
-    </span>
-  );
-};
 
 export default function AgreementList({ agreements: propAgreements }) {
   const { startEditing, deleteAgreement, prepareNewAgreement } = useAgreementContext();
@@ -140,14 +105,18 @@ export default function AgreementList({ agreements: propAgreements }) {
   }
   
   return (
+
+    
     <div className="agreement-list" style={{width: '100%', maxWidth: '1200px', margin: '2rem auto', padding: '2rem', background: '#fff', borderRadius: '8px', boxShadow: '0 2px 10px rgba(0,0,0,0.05)'}}>
       <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem'}}>
-        <h2>My Agreements</h2>
+        <h2 style={{ textAlign: 'center' }}>My Agreements</h2>
         {/* Hide Create button for executive users */}
         {!isExecutive && (
           <button onClick={handleCreate} className="btn btn-primary" style={{textDecoration: 'none', border: 'none', color: '#fff', background: '#007bff', padding: '0.5rem 1rem', borderRadius: '5px', cursor: 'pointer'}}>Create New Agreement</button>
         )}
       </div>
+
+      <SearchBar />
       
       {agreements.length === 0 ? (
         <div style={{ textAlign: 'center', padding: '2rem', color: '#666' }}>
@@ -159,7 +128,7 @@ export default function AgreementList({ agreements: propAgreements }) {
           )}
         </div>
       ) : (
-        <table style={{width: '100%', borderCollapse: 'collapse'}}>
+        <table className='agreement-list-table' style={{width: '100%', borderCollapse: 'collapse'}}>
           <thead>
             <tr style={{borderBottom: '2px solid #eee'}}>
               <th style={{padding: '1rem', textAlign: 'left'}}>Title</th>
@@ -175,7 +144,7 @@ export default function AgreementList({ agreements: propAgreements }) {
             {agreements.map((agreement, index) => (
               <tr key={index} style={{borderBottom: '1px solid #eee'}}>
                 <td style={{padding: '1rem'}}>{agreement.title || agreement.agreementTitle}</td>
-                <td style={{padding: '1rem'}}>{agreement.agreement_type_name || agreement.department?.name || agreement.department}</td>
+                <td style={{padding: '1rem'}}>{agreement.department && typeof agreement.department === 'object' ? agreement.department.name : agreement.department_name || agreement.department}</td>
                 <td style={{padding: '1rem'}}>{agreement.party_name_display || agreement.party_name?.name || agreement.party_name || agreement.type || agreement.party}</td>
                 <td style={{padding: '1rem'}}><StatusBadge status={agreement.status} /></td>
                 <td style={{padding: '1rem'}}>{agreement.start_date || agreement.startDate}</td>

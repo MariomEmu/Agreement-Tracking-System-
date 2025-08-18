@@ -3,7 +3,7 @@ import DashboardCharts from './DashboardCharts';
 import Dashboard2 from './Dashboard2';
 import axiosInstance from '../../axiosConfig';
 
-const POLL_INTERVAL = 10000; // 10 seconds
+const POLL_INTERVAL = 30000; // 30 seconds
 
 const staticInvoiceStats = {
   submitted: 54,
@@ -18,7 +18,7 @@ const HeroSection = () => {
     expiringSoon: 0,
     expired: 0,
     agreementDeptData: [],
-    agreementStatusData: [],
+     agreementStatusData: [], // Commented out - status is now automatic
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -64,7 +64,7 @@ const HeroSection = () => {
       </div>
       <DashboardCharts 
         agreementDeptData={agreementStats.agreementDeptData}
-        agreementStatusData={agreementStats.agreementStatusData}
+         agreementStatusData={agreementStats.agreementStatusData} // Commented out
       />
       <div className="invoice-stats-grid">
         <div className="invoice-stat-card">

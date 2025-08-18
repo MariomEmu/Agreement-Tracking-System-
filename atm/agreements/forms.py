@@ -1,5 +1,5 @@
 from django import forms
-from .models import Agreement
+from .models import Agreement,AgreementType
 from accounts.models import Department, DepartmentPermission, User, Vendor
 from django.db import models
 import logging
@@ -9,10 +9,21 @@ logger = logging.getLogger(__name__)
 
 class AgreementForm(forms.ModelForm):
     agreement_type = forms.ModelChoiceField(
-        queryset=Department.objects.none(),  # Will be populated in __init__
+        queryset=AgreementType.objects.filter(is_active=True),
+        required=True,
+        widget=forms.Select(attrs={'class': 'form-control'}),
+        label='Agreement Type'
+    )
+    department = forms.ModelChoiceField(
+        queryset=Department.objects.all(),
         required=True,
         widget=forms.Select(attrs={'class': 'form-control'}),
         label='Department'
+    )
+    remarks = forms.CharField(
+        required=False,
+        widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+        label='Remarks'
     )
     party_name = forms.ModelChoiceField(
         queryset=Vendor.objects.all(),
@@ -24,13 +35,12 @@ class AgreementForm(forms.ModelForm):
 
     class Meta:
         model = Agreement
-        fields = ['title', 'agreement_reference', 'agreement_type', 'party_name', 
-                 'start_date', 'expiry_date', 'reminder_time', 'status', 'attachment']
+        fields = ['title', 'agreement_reference', 'agreement_type', 'department', 'party_name', 
+                 'start_date', 'expiry_date', 'reminder_time', 'attachment','remarks']
         widgets = {
             'start_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
             'expiry_date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
             'reminder_time': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
-            'status': forms.Select(attrs={'class': 'form-control'}),
             'agreement_reference': forms.TextInput(attrs={'class': 'form-control'}),
             'title': forms.TextInput(attrs={'class': 'form-control'}),
         }
@@ -73,7 +83,7 @@ class AgreementForm(forms.ModelForm):
             department_ids.update(permitted_dept_ids)
             
             # Update the queryset for agreement_type
-            self.fields['agreement_type'].queryset = Department.objects.filter(id__in=department_ids)
+            self.fields['agreement_type'].queryset = AgreementType.objects.filter(is_active=True)
             
             # Make attachment not required if:
             # 1. We're editing from preview and have an existing file
@@ -140,9 +150,9 @@ class AgreementForm(forms.ModelForm):
             instance.attachment.delete(save=False)
             instance.attachment = None
         
-        # Set department from agreement_type
-        if self.cleaned_data.get('agreement_type'):
-            instance.department = self.cleaned_data['agreement_type']
+        # Set department from department field
+        if self.cleaned_data.get('department'):
+            instance.department = self.cleaned_data['department']
         
         if commit:
             instance.save()

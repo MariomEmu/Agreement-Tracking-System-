@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import StatusBadge from '../Common/StatusBadge';
+// import StatusBadge from '../Common/StatusBadge'; // Commented out - no longer used
 import { FaEye, FaEdit, FaTrash } from 'react-icons/fa';
 
 const AgreementTable = () => {
@@ -51,7 +51,7 @@ const AgreementTable = () => {
       <div className="table-header">
         <span>Title</span>
         <span>Party</span>
-        <span>Status</span>
+        {/* <span>Status</span> */}
         <span>Department</span>
         <span>Start Date</span>
         <span>End Date</span>
@@ -62,7 +62,7 @@ const AgreementTable = () => {
         <div className="table-row" key={agreement.id}>
           <span>{agreement.title}</span>
           <span>{agreement.party}</span>
-          <span><StatusBadge status={agreement.status} /></span>
+          {/* <span><StatusBadge status={agreement.status} /></span> */}
           <span>{agreement.department}</span>
           <span>{agreement.startDate}</span>
           <span>{agreement.endDate}</span>

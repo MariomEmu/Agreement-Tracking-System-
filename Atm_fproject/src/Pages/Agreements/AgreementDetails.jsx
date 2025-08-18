@@ -58,10 +58,10 @@ export const AgreementDetails = ({ agreement, onBack, onPreview }) => {
           <label>Department</label>
           <div>{agreement.agreement_type_name || agreement.department?.name || 'Not specified'}</div>
         </div>
-        <div className="detail-item">
+        {/* <div className="detail-item">
           <label>Status</label>
           <div>{agreement.status}</div>
-        </div>
+        </div> */}
         <div className="detail-item">
           <label>Attachment</label>
           <div>

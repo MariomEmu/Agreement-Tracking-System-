@@ -37,6 +37,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'agreements.middleware.SkipSessionRefreshForSpecificGET',
 ]
 
 # CORS and CSRF Settings
@@ -58,6 +59,16 @@ SESSION_COOKIE_HTTPONLY = True
 # Add these to your settings.py
 CSRF_COOKIE_SAMESITE = 'None'  # Changed from 'Lax' to 'None'
 CSRF_COOKIE_SECURE = True      # Changed from False to True
+
+# Session expires after 5 minutes of inactivity
+SESSION_COOKIE_AGE = 25*60  # 5 minutes in seconds
+ 
+# Save the session on every request so that the timeout resets
+SESSION_SAVE_EVERY_REQUEST = True
+ 
+# Make sure browser closes session cookies when it is closed (optional)
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
 SESSION_COOKIE_SAMESITE = 'None'
 SESSION_COOKIE_SECURE = True
 
@@ -105,7 +116,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'atm',
         'USER': 'root',
-        'PASSWORD': 'sonali1234',
+        'PASSWORD': '16016016',
         'HOST': 'localhost',
         'PORT': '3306',
     }
@@ -175,6 +186,10 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'noreply@sonaliintellect.com'  # Replace with your Office365 email
 EMAIL_HOST_PASSWORD = 'SP4ft@111'         # Replace with your password
 DEFAULT_FROM_EMAIL = 'noreply@sonaliintellect.com'  # Should match EMAIL_HOST_USER
+
+# Company Information for Email Templates
+COMPANY_NAME = 'Sonali Intellect Limited'
+#SUPPORT_CONTACT = 'support@sonaliintellect.com'
 
 # Add logging configuration
 LOGGING = {

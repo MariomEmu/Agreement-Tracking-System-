@@ -18,7 +18,7 @@ const CreateAgreement = () => {
     endDate: '',
     reminderDate: '',
     department: '',
-    status: 'Draft',
+    // status: 'Draft', // Commented out - status is now automatic
     file: null
   });
 
@@ -36,7 +36,7 @@ const CreateAgreement = () => {
         endDate: agreementData.expiryDate || '',
         reminderDate: agreementData.reminderDate || '',
         department: agreementData.department || '',
-        status: agreementData.status || 'Draft',
+        // status: agreementData.status || 'Draft', // Commented out - status is now automatic
         file: agreementData.attachment || null
       });
     }
@@ -90,7 +90,7 @@ const CreateAgreement = () => {
       expiryDate: formData.endDate,
       reminderDate: formData.reminderDate,
       department: formData.department,
-      status: formData.status,
+      // status: formData.status, // Commented out - status is now automatic
       attachment: formData.file
     };
 

@@ -29,7 +29,7 @@ export default function CreateAgreement() {
   expiry_date: data.expiryDate,
   reminder_time: data.reminderDate,
   department: data.department,
-  status: data.status,
+  // status: data.status, // Commented out - status is now automatic
   created_by: 1,  // later, replace with logged-in user's id
 };
 

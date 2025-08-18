@@ -1,8 +1,8 @@
 import React from 'react';
 
 const statusColors = {
-  Active: '#27ae60',
-  Expired: '#e74c3c',
+  ongoing: '#27ae60',
+  expired: '#e74c3c',
   Cancelled: '#e67e22',
   Overdue: '#e67e22',
   Paid: '#27ae60',

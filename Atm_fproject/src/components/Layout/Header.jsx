@@ -117,9 +117,9 @@ const Header = ({ onMenuClick, onRightPanelClick }) => {
         <span className="time-date">{formattedTime} / {formattedDate}</span>
         <div className="user-profile" ref={profileRef} style={{ position: 'relative', cursor: 'pointer' }} onClick={() => setDropdownOpen(v => !v)}>
           <img src="/avatar.png" alt="User Profile" className="user-avatar" />
-          <span style={{whiteSpace: 'nowrap', marginLeft: 4}}>Welcome, {firstName}</span>
+          <span className="user-name" style={{whiteSpace: 'nowrap', marginLeft: 4}}>{firstName}</span>
           {dropdownOpen && (
-            <div style={{ position: 'absolute', right: 0, top: '110%', background: '#fff', boxShadow: '0 2px 8px rgba(0,0,0,0.12)', borderRadius: 6, minWidth: 120, zIndex: 10 }}>
+            <div style={{ position: 'absolute', right: 0, top: '110%', background: '#fff', boxShadow: '0 2px 8px rgba(0,0,0,0.12)', borderRadius: 6, minWidth: 150, zIndex: 10 }}>
               <button onClick={() => navigate('/change-password')} style={{ width: '100%', padding: '10px 16px', background: 'none', border: 'none', textAlign: 'left', cursor: 'pointer', fontWeight: 500, color: '#222', borderRadius: 6 }}>
                 Change Password
               </button>

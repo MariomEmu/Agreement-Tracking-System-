@@ -10,7 +10,8 @@ from django.db.models import Q
 import os
 import logging
 from .models import Agreement
-from .serializers import AgreementSerializer
+from .models import AgreementType
+from .serializers import AgreementSerializer, AgreementTypeSerializer
 from .forms import AgreementForm
 from accounts.models import Department, User, DepartmentPermission, Vendor
 from accounts.serializers import DepartmentSerializer
@@ -31,7 +32,7 @@ class AgreementViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         agreement = serializer.save(creator=self.request.user)
         # Send notification to assigned users
-        agreement.send_notification('created')
+        agreement.send_notification(self.request.user, 'created')
 
     def get_queryset(self):
         """Filter agreements based on user permissions"""
@@ -104,34 +105,39 @@ class AgreementViewSet(viewsets.ModelViewSet):
     def form_data(self, request):
         """Get form data for creating/editing agreements"""
         user = request.user
-        
+
         # Check if user is in an executive department
         is_executive = Department.objects.filter(
             executive=True,
             users=user
         ).exists()
-        
+
         if is_executive:
             return Response({
                 'error': 'Executive users cannot create agreements.'
             }, status=status.HTTP_403_FORBIDDEN)
-        
+
         # Get user's departments and permitted departments
         department_ids = set()
         if user.department:
             department_ids.add(user.department.id)
-        
+
         permitted_dept_ids = DepartmentPermission.objects.filter(
             user=user,
             permission_type='edit'
         ).values_list('department_id', flat=True)
         department_ids.update(permitted_dept_ids)
-        
+
         permitted_departments = Department.objects.filter(id__in=department_ids)
         department_serializer = DepartmentSerializer(permitted_departments, many=True)
-        
+
+        # Get active agreement types
+        agreement_types = AgreementType.objects.filter(is_active=True)
+        agreement_type_serializer = AgreementTypeSerializer(agreement_types, many=True)
+
         return Response({
             'departments': department_serializer.data,
+            'agreement_types': agreement_type_serializer.data,
             'user_info': {
                 'id': user.id,
                 'email': user.email,
@@ -185,7 +191,9 @@ class AgreementViewSet(viewsets.ModelViewSet):
         if serializer.is_valid():
             updated_agreement = serializer.save()
             # Send notification to assigned users
-            updated_agreement.send_notification('updated')
+            from accounts.models import User
+            user_obj = request.user
+            updated_agreement.send_notification(user_obj, 'updated')
             return Response({
                 'success': True,
                 'message': 'Agreement updated successfully!',
@@ -229,7 +237,7 @@ class AgreementViewSet(viewsets.ModelViewSet):
                     form.save_m2m()  # Save many-to-many relationships
                     
                     # Send notification to assigned users
-                    agreement.send_notification('created')
+                    agreement.send_notification(request.user, 'created')
                     
                     # Clear the preview form data from session if it exists
                     if 'preview_form_data' in request.session:
@@ -365,9 +373,18 @@ class AgreementFormDataAPIView(APIView):
         
         permitted_departments = Department.objects.filter(id__in=department_ids)
         department_serializer = DepartmentSerializer(permitted_departments, many=True)
+
+        agreement_types = AgreementType.objects.filter(is_active=True)
+        agreement_type_serializer = AgreementTypeSerializer(agreement_types, many=True)
+
+        
+        # Get active agreement types
+        agreement_types = AgreementType.objects.filter(is_active=True)
+        agreement_type_serializer = AgreementTypeSerializer(agreement_types, many=True)
         
         return Response({
             'departments': department_serializer.data,
+            'agreement_types': agreement_type_serializer.data,
             'user_info': {
                 'id': user.id,
                 'email': user.email,
@@ -416,7 +433,7 @@ class SubmitAgreementAPIView(APIView):
 
                 agreement.save()
                 form.save_m2m()
-                agreement.send_notification('created')
+                agreement.send_notification(request.user, 'created')
 
                 logger.info(f"Agreement {agreement.id} saved successfully")
                 return Response({
@@ -512,7 +529,7 @@ class EditAgreementAPIView(APIView):
         if serializer.is_valid():
             updated_agreement = serializer.save()
             # Send notification to assigned users
-            updated_agreement.send_notification('updated')
+            updated_agreement.send_notification(request.user, 'updated')
             return Response({
                 'success': True,
                 'message': 'Agreement updated successfully!',
