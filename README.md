@@ -13,6 +13,8 @@ The project provides role-based access control with Superusers, Regular Users, a
 ---
 ### Overview of the system 
 
+![Screenshot](https://github.com/MariomEmu/Agreement-Tracking-System-/raw/new/version/Atm_fproject/Images/Screenshot%202025-09-02%20134009.png)
+
 ![Screenshot 1](https://github.com/MariomEmu/Agreement-Tracking-System-/raw/new/version/Atm_fproject/Images/Screenshot%202025-09-02%20131626.png)
 
 ![Screenshot 2](https://github.com/MariomEmu/Agreement-Tracking-System-/raw/new/version/Atm_fproject/Images/Screenshot%202025-09-02%20131713.png)
